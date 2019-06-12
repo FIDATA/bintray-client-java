@@ -173,8 +173,8 @@ def addSlf4J(name) {
     [group: 'org.slf4j', name: name, version: '1.7.5']
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.4'
+wrapper {
+    gradleVersion = '5.4.1'
 }
 
 idea {
