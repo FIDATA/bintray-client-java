@@ -2,7 +2,11 @@ package com.jfrog.bintray.client.impl.handle;
 
 import com.jfrog.bintray.client.api.BintrayCallException;
 import com.jfrog.bintray.client.api.MultipleBintrayCallException;
+import com.jfrog.bintray.client.api.ObjectMapperHelper;
+import com.jfrog.bintray.client.api.details.OssLicenseDetails;
 import com.jfrog.bintray.client.api.handle.*;
+import com.jfrog.bintray.client.api.model.OssLicense;
+import com.jfrog.bintray.client.impl.model.OssLicenseImpl;
 import com.jfrog.bintray.client.impl.util.URIUtil;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.*;
@@ -17,6 +21,7 @@ import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.DefaultHttpResponseFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +33,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+
+import static com.jfrog.bintray.client.api.BintrayClientConstatnts.API_OSS_LICENSES;
 
 
 /**
@@ -85,6 +92,34 @@ public class BintrayImpl implements Bintray {
     public VersionHandle version(String versionPath) {
         // TODO: implement full path resolution that receives /subject/repo/pkg/version
         throw new UnsupportedOperationException("Not yet supported");
+    }
+
+    @Override
+    public List<OssLicense> ossLicenses() throws IOException, BintrayCallException {
+        List<OssLicenseDetails> ossLicenseDetails = getOssLicenseDetails();
+        List<OssLicense> result = new ArrayList<>(ossLicenseDetails.size());
+        for (OssLicenseDetails ossLicenseDetail : ossLicenseDetails) {
+            result.add(new OssLicenseImpl(ossLicenseDetail));
+        }
+        return result;
+    }
+
+    private List<OssLicenseDetails> getOssLicenseDetails() throws IOException {
+        HttpResponse response = get(getOssLicensesUri(), null);
+        List<OssLicenseDetails> ossLicenseDetailsList;
+        InputStream jsonContentStream = response.getEntity().getContent();
+        ObjectMapper mapper = ObjectMapperHelper.get();
+        try {
+            ossLicenseDetailsList = mapper.readValue(jsonContentStream, mapper.getTypeFactory().constructCollectionType(List.class, OssLicenseDetails.class));
+        } catch (IOException e) {
+            log.error("Can't parse the json file: " + e.getMessage());
+            throw e;
+        }
+        return ossLicenseDetailsList;
+    }
+
+    private String getOssLicensesUri() {
+        return API_OSS_LICENSES;
     }
 
     @Override

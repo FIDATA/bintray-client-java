@@ -15,6 +15,8 @@ public interface BintrayClientConstatnts {
     String API_CONTENT = "content/";
     String API_PRODUCTS = "products/";
 
+    String API_OSS_LICENSES = "licenses/oss_licenses";
+
     String API_PUBLISH = "/publish";
     String API_ATTR = "/attributes";
 

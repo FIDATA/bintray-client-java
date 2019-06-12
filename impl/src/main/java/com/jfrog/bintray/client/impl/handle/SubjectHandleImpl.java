@@ -3,9 +3,11 @@ package com.jfrog.bintray.client.impl.handle;
 import com.jfrog.bintray.client.api.BintrayCallException;
 import com.jfrog.bintray.client.api.ObjectMapperHelper;
 import com.jfrog.bintray.client.api.details.ProductDetails;
+import com.jfrog.bintray.client.api.details.ProprietaryLicenseDetails;
 import com.jfrog.bintray.client.api.details.RepositoryDetails;
 import com.jfrog.bintray.client.api.details.SubjectDetails;
 import com.jfrog.bintray.client.api.handle.ProductHandle;
+import com.jfrog.bintray.client.api.handle.ProprietaryLicenseHandle;
 import com.jfrog.bintray.client.api.handle.RepositoryHandle;
 import com.jfrog.bintray.client.api.handle.SubjectHandle;
 import com.jfrog.bintray.client.api.model.Subject;
@@ -69,6 +71,16 @@ class SubjectHandleImpl implements SubjectHandle {
         BintrayImpl.addContentTypeJsonHeader(headers);
         bintrayHandle.post(getProductUri(), headers, IOUtils.toInputStream(jsonContent));
         return new ProductHandleImpl(bintrayHandle, this, productDetails.getName());
+    }
+
+    @Override
+    public ProprietaryLicenseHandle license(String name) {
+        return new ProprietaryLicenseHandleImpl(bintrayHandle, this, name);
+    }
+
+    @Override
+    public ProprietaryLicenseHandle createLicense(ProprietaryLicenseDetails proprietaryLicenseDetails) throws IOException, BintrayCallException {
+        return null;
     }
 
     @Override

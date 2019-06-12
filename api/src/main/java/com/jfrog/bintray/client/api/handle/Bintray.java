@@ -2,10 +2,13 @@ package com.jfrog.bintray.client.api.handle;
 
 import com.jfrog.bintray.client.api.BintrayCallException;
 import com.jfrog.bintray.client.api.MultipleBintrayCallException;
+import com.jfrog.bintray.client.api.model.OssLicense;
 import org.apache.http.HttpResponse;
 
 import java.io.Closeable;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,6 +23,8 @@ public interface Bintray extends Closeable {
     PackageHandle pkg(String packagePath);
 
     VersionHandle version(String versionPath);
+
+    List<OssLicense> ossLicenses() throws IOException, BintrayCallException;
 
     /**
      * Following are generic HTTP requests you can perform against Bintray's API, as defined in your created client
